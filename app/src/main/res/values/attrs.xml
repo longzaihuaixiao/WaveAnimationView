@@ -1,9 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <declare-styleable name="Wave">
-        <attr name="primary_color" format="color"/>
-        <attr name="minor_color" format="color"/>
-        <attr name="text" format="string"/>
-        <attr name="density" format="integer"/>
+        <attr name="primary_color" format="color" />
+        <attr name="minor_color" format="color" />
+        <attr name="text" format="string" />
+        <attr name="density" format="integer">
+            <enum name="high" value="4" />
+            <enum name="mid" value="3" />
+            <enum name="low" value="2" />
+        </attr>
+        <attr name="speed" format="integer">
+            <enum name="high" value="1" />
+            <enum name="mid" value="2" />
+            <enum name="low" value="4" />
+        </attr>
     </declare-styleable>
 </resources>

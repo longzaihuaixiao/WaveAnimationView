@@ -43,17 +43,20 @@ import android.view.animation.LinearInterpolator;
  */
 
 public class WaveView extends View {
-    private int primaryColor = Color.BLACK;
-    private int minorColor = Color.WHITE;
-    private String text = "龙";
-    private int mWidth, mHeight;
-    private int waveWidth, waveHeight;
-    private WaveDensity density = WaveDensity.LOW;
-    private float currentPercent;
+    private int primaryColor = Color.BLACK;//主色，默认为黑色
+    private int minorColor = Color.WHITE;//辅色，默认为白色
+    private String text = "浪";//默认文字
 
-    private Paint primaryPaint;
-    private Paint minorPaint;
-    private Paint textPaint;
+
+    private int mWidth, mHeight;//获取控件的宽高
+    private int waveWidth, waveHeight;//波浪的宽高。宽，波峰到波谷的x距离；高，波峰到波谷的y距离
+    private WaveDensity density = WaveDensity.MID;//波浪的密度
+    private WaveSpeed speed = WaveSpeed.MID;//波浪的速度
+    private float currentPercent;//当前的进度
+
+    private Paint primaryPaint;//主色画笔
+    private Paint minorPaint;//辅色画笔
+    private Paint textPaint;//文字画笔
 
     public WaveView(Context context) {
         super(context);
@@ -70,20 +73,28 @@ public class WaveView extends View {
         init(context, attrs);
     }
 
+    /**
+     * 进行初始化
+     *
+     * @param context
+     * @param attrs
+     */
     private void init(Context context, AttributeSet attrs) {
         if (attrs != null) {
-            //获取一些xml参数;
+            //获取参数;
             initAttrs(context, attrs);
         }
 
+        //抗锯齿，样式，颜色，防抖动
         primaryPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         primaryPaint.setStyle(Paint.Style.FILL);
         primaryPaint.setColor(primaryColor);
         primaryPaint.setDither(true);
 
         textPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        textPaint.setTypeface(Typeface.DEFAULT_BOLD);
-        textPaint.setTextAlign(Paint.Align.CENTER);
+        textPaint.setTypeface(Typeface.DEFAULT_BOLD);//粗体
+        textPaint.setTextAlign(Paint.Align.CENTER);//中央对齐
+        textPaint.setDither(true);
 
         minorPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         minorPaint.setStyle(Paint.Style.FILL);
@@ -91,7 +102,7 @@ public class WaveView extends View {
         minorPaint.setDither(true);
 
         ValueAnimator animator = ValueAnimator.ofFloat(0, 1);
-        animator.setDuration(2 * 1000);
+        animator.setDuration((long) (speed.getValue() / 2.0 * 1000));
         animator.setInterpolator(new LinearInterpolator());
         animator.setRepeatCount(ValueAnimator.INFINITE);
         animator.setRepeatMode(ValueAnimator.RESTART);
@@ -127,8 +138,7 @@ public class WaveView extends View {
 
         path.moveTo(x, mHeight / 2);
 
-
-        for (int i = 0; i < density.value * 2; i++) {
+        for (int i = 0; i < density.getValue() * 2; i++) {
             if (i % 2 == 0)
                 path.rQuadTo(waveWidth / 2, waveHeight / 2, waveWidth, 0);
             else
@@ -154,11 +164,11 @@ public class WaveView extends View {
         if (heightMode == MeasureSpec.EXACTLY) {
             mHeight = heightSize;
         }
-        setMeasuredDimension(mWidth, mHeight);
-        double x = 1.0 / density.value;
+        double x = 1.0 / density.getValue();
         waveWidth = (int) (mWidth * x);
         waveHeight = (int) (mHeight * (x / 2));
-        textPaint.setTextSize(mWidth /2);
+        textPaint.setTextSize(mWidth / 2);
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
     }
 
     private void initAttrs(Context context, AttributeSet attrs) {
@@ -167,14 +177,24 @@ public class WaveView extends View {
         minorColor = array.getColor(R.styleable.Wave_minor_color, minorColor);
         String tmp = array.getString(R.styleable.Wave_text);
         if (!TextUtils.isEmpty(tmp))
-            text = tmp.substring(0,1);
-        int des = array.getInt(R.styleable.Wave_density, density.value);
-        if (des >= WaveDensity.HIGH.value) {
+            text = tmp.substring(0, 1);//只支持一个字
+        //根据值划分密度档
+        int des = array.getInt(R.styleable.Wave_density, density.getValue());
+        if (des >= WaveDensity.HIGH.getValue()) {
             density = WaveDensity.HIGH;
-        } else if (des >= WaveDensity.MID.value && des < WaveDensity.HIGH.value) {
-            density = WaveDensity.MID;
-        } else {
+        } else if (des <= WaveDensity.LOW.getValue()) {
             density = WaveDensity.LOW;
+        } else {
+            density = WaveDensity.MID;
+        }
+        //根据值划分速度档
+        int sp = array.getInt(R.styleable.Wave_speed, speed.getValue());
+        if (sp >= WaveSpeed.LOW.getValue()) {
+            speed = WaveSpeed.LOW;
+        } else if (sp <= WaveSpeed.HIGH.getValue()) {
+            speed = WaveSpeed.HIGH;
+        } else {
+            speed = WaveSpeed.MID;
         }
         array.recycle();
     }
@@ -206,17 +226,4 @@ public class WaveView extends View {
         canvas.drawText(text, rect.centerX(), centerY, textPaint);
     }
 
-    public static enum WaveDensity {
-        HIGH(4), MID(3), LOW(2);
-
-        private int value;
-
-        WaveDensity(int value) {
-            this.value = value;
-        }
-
-        public int getValue() {
-            return value;
-        }
-    }
 }

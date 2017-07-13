@@ -9,8 +9,8 @@
     <com.evil.waveanimationview.WaveView
         app:primary_color="@android:color/holo_blue_bright"
         app:minor_color="@android:color/white"
-        app:density="2"
-        app:text="波"
+        app:density="high"
+        app:speed="high"
         android:layout_width="300dp"
         android:layout_height="300dp" />
 
