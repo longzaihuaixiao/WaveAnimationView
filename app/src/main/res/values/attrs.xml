@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="Wave">
+        <attr name="primary_color" format="color"/>
+        <attr name="minor_color" format="color"/>
+        <attr name="text" format="string"/>
+        <attr name="density" format="integer"/>
+    </declare-styleable>
+</resources>

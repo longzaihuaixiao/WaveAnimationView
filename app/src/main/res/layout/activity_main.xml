@@ -6,13 +6,12 @@
     android:layout_height="match_parent"
     tools:context="com.evil.waveanimationview.MainActivity">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Hello World!"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+    <com.evil.waveanimationview.WaveView
+        app:primary_color="@android:color/holo_blue_bright"
+        app:minor_color="@android:color/white"
+        app:density="2"
+        app:text="波"
+        android:layout_width="300dp"
+        android:layout_height="300dp" />
 
 </android.support.constraint.ConstraintLayout>
